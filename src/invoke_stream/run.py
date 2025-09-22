@@ -26,6 +26,7 @@ def preprocess(state: State):
 def chatbot(state: State):
     # 這個函數代表圖中的一個節點，它接收當前狀態，調用 LLM 生成回應，並返回更新後的狀態
     # 這裡的動作是將用戶的消息傳遞給 LLM，並將回應添加到 messages 中
+    print(state["messages"])
     return {"messages": [llm.invoke(state["messages"])]}
 
 
@@ -37,7 +38,6 @@ def build_graph():
     graph_builder.set_entry_point("preprocess")
     graph_builder.add_edge("preprocess", "chatbot")
     graph_builder.set_finish_point("chatbot")
-
 
     # 步驟 5：編譯圖
     graph = graph_builder.compile()
@@ -83,5 +83,5 @@ def demonstrate_invoke_vs_stream():
 
 if __name__ == "__main__":
     # 運行聊天界面
-    demonstrate_invoke_vs_stream()
-    # chat_interface()
+    # demonstrate_invoke_vs_stream()
+    chat_interface()
