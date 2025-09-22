@@ -15,26 +15,44 @@ class MyState(TypedDict):  # from typing import TypedDict
     j: int
     k: int
     valid: str
+    reask: bool = False
 
 # Functions on **nodes**
 def parse(state: MyState):
     print(f"parse: {state['i'], state['j'], state['k']}")
-    user_input = input("Enter three integers separated by spaces: ")
-    i, j, k = map(int, user_input.split())
+    if state.get('reask', False):
+        print("Re-asking for input due to previous invalid input.")
+        user_input = input("Enter three integers separated by spaces: ")
+        nums = [int(x) for x in user_input.split()]
+        i = nums[0] if len(nums) > 0 else state['i']
+        j = nums[1] if len(nums) > 1 else state['j']
+        k = nums[2] if len(nums) > 2 else state['k']
+    else:
+        i, j, k = state['i'], state['j'], state['k']
     return {"i": i, "j": j, "k": k}
 
 def validate(state: MyState):
     i, j, k = state["i"], state["j"], state["k"]
     
     print(f"validate: {i}, {j}, {k}")
-    if i+j+k > 200:
-        return {"i": i, "j": j, "k": k, "valid": "TOO BIG"}
+    if i is None or j is None or k is None:
+        return {"i": i, "j": j, "k": k, "valid": "INVALID", "reask": True}
+    
+    if i+j+k < 200:
+        return {"i": i, "j": j, "k": k, "valid": "TOO SMALL", "reask": True}
 
-    return {"i": i, "j": j, "k": k, "valid": "OK"}
+    return {"i": i, "j": j, "k": k, "valid": "OK", "reask": False}
+
+# def validate_i(state: MyState):
+#     i = state["i"]
+#     print(f"validate_i: {i}")
+#     if i > 100:
+#         return {"i": i, "valid": "TOO BIG:I"}
+#     return {"i": i, "valid": "OK"}
 
 # Conditional **edge** function
 def is_big_enough(state: MyState):
-    if state['valid'] == "TOO BIG":
+    if state['valid'] == "OK":
         return END
     else:
         return "parse"
