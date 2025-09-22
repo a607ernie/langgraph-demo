@@ -6,7 +6,8 @@ from typing import Annotated
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
-
+from io import BytesIO
+from PIL import Image
 from llm import LLMManager
 
 # 步驟 1：定義狀態
@@ -48,6 +49,16 @@ def chat_interface():
             for value in event.values():
                 print("AI 助理:", value["messages"][-1].content)
 
+def create_mermaid():
+    graph = build_graph()
+    # 生成 PNG 數據
+    png_data = graph.get_graph().draw_mermaid_png()
+    # 轉換到 JPG
+    image = Image.open(BytesIO(png_data))
+    image.save("src/simple_graph/graph.jpg", "JPEG")
+    print("Graph 的 JPG 圖片已保存為 graph.jpg")
+
 if __name__ == "__main__":
     # 運行聊天界面
-    chat_interface()
+    # chat_interface()
+    create_mermaid()
