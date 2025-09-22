@@ -1,0 +1,7 @@
+{
+  "graphs": {
+    "leave_request": "src/invoke_stream/run.py:build_graph"
+  },
+  "python_version": "3.11",
+  "dependencies": ["."]
+}
