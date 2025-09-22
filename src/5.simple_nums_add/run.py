@@ -8,7 +8,6 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from io import BytesIO
 from PIL import Image
-from llm import LLMManager
 
 # 步驟 1：定義狀態
 class MyState(TypedDict):  # from typing import TypedDict
