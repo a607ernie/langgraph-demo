@@ -1,6 +1,6 @@
 {
   "graphs": {
-    "leave_request": "src/invoke_stream/run.py:build_graph"
+    "leave_request": "src/99.flowchat/run.py:build_graph"
   },
   "python_version": "3.11",
   "dependencies": ["."]
