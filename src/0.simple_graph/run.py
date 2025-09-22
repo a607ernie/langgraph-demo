@@ -55,10 +55,10 @@ def create_mermaid():
     png_data = graph.get_graph().draw_mermaid_png()
     # 轉換到 JPG
     image = Image.open(BytesIO(png_data))
-    image.save("src/simple_graph/graph.jpg", "JPEG")
+    image.save(os.path.join(os.path.dirname(__file__), "graph.jpg"), "JPEG")
     print("Graph 的 JPG 圖片已保存為 graph.jpg")
 
 if __name__ == "__main__":
     # 運行聊天界面
-    # chat_interface()
-    create_mermaid()
+    chat_interface()
+    # create_mermaid()
