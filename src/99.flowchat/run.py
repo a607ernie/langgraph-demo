@@ -51,7 +51,7 @@ def validate(state: MyState):
 #     return {"i": i, "valid": "OK"}
 
 # Conditional **edge** function
-def is_big_enough(state: MyState):
+def is_small_enough(state: MyState):
     if state['valid'] == "OK":
         return END
     else:
@@ -68,7 +68,7 @@ def build_graph():
 
     workflow.add_edge("parse", "validate")
     workflow.add_conditional_edges(
-        source="validate", path=is_big_enough
+        source="validate", path=is_small_enough
     )
     graph = workflow.compile()
     return graph
