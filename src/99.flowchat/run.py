@@ -80,10 +80,10 @@ if __name__ == "__main__":
     
     graph = build_graph()
 
-    # create_mermaid(graph)
+    create_mermaid(graph)
 
-    user_input = {"i": 0, "j": 0, "k": 0}
-    r = graph.stream(user_input)
-    for item in r:
-        print(item)
+    # user_input = {"i": 0, "j": 0, "k": 0}
+    # r = graph.stream(user_input)
+    # for item in r:
+    #     print(item)
     
