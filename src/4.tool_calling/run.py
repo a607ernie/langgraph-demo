@@ -6,13 +6,19 @@ from typing import Annotated, Literal
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.graph.message import add_messages
-from io import BytesIO
-from PIL import Image
 from llm import LLMManager
 
 from langgraph.prebuilt import ToolNode
-
 from langchain_core.tools import tool
+
+from utils.graph2mermaid import create_mermaid # for saving mermaid code
+
+# 步驟 1：定義狀態
+class State(TypedDict):
+    # Messages have the type "list". The `add_messages` function
+    # in the annotation defines how this state key should be updated
+    # (in this case, it appends messages to the list, rather than overwriting them)
+    messages: Annotated[list, add_messages]
 
 @tool
 def get_taiwan_weather(city: str) -> str:
@@ -23,14 +29,6 @@ def get_taiwan_weather(city: str) -> str:
         "高雄": "陰天，溫度30°C"
     }
     return f"{city}的天氣：{weather_data.get(city, '暫無資料')}"
-
-
-# 步驟 1：定義狀態
-class State(TypedDict):
-    # Messages have the type "list". The `add_messages` function
-    # in the annotation defines how this state key should be updated
-    # (in this case, it appends messages to the list, rather than overwriting them)
-    messages: Annotated[list, add_messages]
 
 # 定義工具
 tools = [get_taiwan_weather]
@@ -46,7 +44,7 @@ llm_with_tools = llm.bind_tools(tools)
 
 # 步驟 3：添加語言模型節點
 
-def should_continue(state: MessagesState) -> Literal["tools", END]:
+def should_continue(state: MessagesState) -> Literal["tools", END]: # type: ignore
     messages = state["messages"]
     last_message = messages[-1]
     if last_message.tool_calls:
@@ -80,30 +78,27 @@ def build_graph():
     return graph
 
 # 步驟 6：實現聊天界面
-def chat_interface():
-    graph = build_graph()
+def chat_interface(graph):
 
-    user_input = "苗栗天氣如何?"
+    # user_input = "苗栗天氣如何?"
+    user_input = "高雄天氣如何?"
     events = graph.stream(
-        {"messages": [("user", user_input)]},
-        stream_mode="values"
+        {"messages": [("user", user_input)]}, # initial state
+        config={"recursion_limit": 100}, # we want to limit the recursion depth
+        stream_mode="values" 
+        # 表示會流式傳輸每個事件的完整狀態值（即整個狀態字典），
+        # 而不是只傳輸更新或消息。這允許逐步觀察圖的執行過程。
+        # 其他模式包括 "updates"（傳輸節點更新）和 "messages"（傳輸消息）。
         )
     for event in events:
         if "messages" in event:
             event["messages"][-1].pretty_print()
 
-def create_mermaid():
-    graph = build_graph()
-    # 生成 PNG 數據
-    png_data = graph.get_graph().draw_mermaid_png()
-    # 轉換到 JPG
-    image = Image.open(BytesIO(png_data))
-    image.save(os.path.join(os.path.dirname(__file__), "graph.jpg"), "JPEG")
-    print("Graph 的 JPG 圖片已保存為 graph.jpg")
-
 if __name__ == "__main__":
     # 運行聊天界面
     # result = get_taiwan_weather.run("台北")
     # print(f"呼叫工具結果{result}")
-    # chat_interface()
-    create_mermaid()
+    graph = build_graph()
+    chat_interface(graph)
+    
+    # create_mermaid(graph)
