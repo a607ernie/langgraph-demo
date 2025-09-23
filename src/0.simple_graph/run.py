@@ -6,9 +6,9 @@ from typing import Annotated
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
-from io import BytesIO
-from PIL import Image
 from llm import LLMManager
+
+from utils.graph2mermaid import create_mermaid # for saving mermaid code
 
 # 步驟 1：定義狀態
 class State(TypedDict):
@@ -36,7 +36,6 @@ def build_graph():
 
 # 步驟 6：實現聊天界面
 def chat_interface():
-    graph = build_graph()
 
     print("歡迎使用 AI 助理！輸入 'quit', 'exit' 或 'q' 來結束對話。")
     while True:
@@ -49,16 +48,8 @@ def chat_interface():
             for value in event.values():
                 print("AI 助理:", value["messages"][-1].content)
 
-def create_mermaid():
-    graph = build_graph()
-    # 生成 PNG 數據
-    png_data = graph.get_graph().draw_mermaid_png()
-    # 轉換到 JPG
-    image = Image.open(BytesIO(png_data))
-    image.save(os.path.join(os.path.dirname(__file__), "graph.jpg"), "JPEG")
-    print("Graph 的 JPG 圖片已保存為 graph.jpg")
-
 if __name__ == "__main__":
     # 運行聊天界面
-    chat_interface()
-    # create_mermaid()
+    graph = build_graph()
+    # chat_interface(graph)
+    create_mermaid(graph)
