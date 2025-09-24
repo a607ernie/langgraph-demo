@@ -2,13 +2,16 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from typing import Annotated
-from typing_extensions import TypedDict
+from typing import Annotated,TypedDict, List, Tuple, Union, Literal
+
+# langgraph 相關
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
-from llm import LLMManager
 
+# utils & llm 相關
+from llm import LLMManager
 from utils.graph2mermaid import create_mermaid # for saving mermaid code
+
 
 # 步驟 1：定義狀態
 class State(TypedDict):
