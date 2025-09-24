@@ -1,0 +1,26 @@
+---
+config:
+  theme: default
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	evaluator(evaluator)
+	news_chef(news_chef)
+	translator(translator)
+	expander(expander)
+	publisher(publisher)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> evaluator;
+	evaluator -. &nbsp;not_relevant&nbsp; .-> __end__;
+	evaluator -.-> news_chef;
+	expander --> news_chef;
+	news_chef -.-> expander;
+	news_chef -.-> publisher;
+	news_chef -.-> translator;
+	translator --> news_chef;
+	publisher --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
